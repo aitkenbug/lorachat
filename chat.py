@@ -32,11 +32,13 @@ def send_msg(message):
     print(ser.readline().decode())
 
 def receive_msg():
-    ser.write("AT+TEST=RXLRPKT")
+    ser.write("AT+TEST=RXLRPKT".encode())
     while True:
         if ser.available():
             rx_msg = ser.readline().decode()
-            print(rx_msg)
+            if '+TEST: RX' in rx_msg:
+                msg_data = rx_msg.split('\"')[-1]
+            print(msg_data)
 
 def chr_to_hex(string):
     return codecs.encode(string.encode(),'hex').decode()
@@ -48,4 +50,3 @@ def hex_to_chr(string):
 initialize_radio()
 time.sleep(1)
 send_msg(chr_to_hex('Hola Cata'))
-receive_msg()
