@@ -46,12 +46,13 @@ def send_msg(message):
 
 def receive_msg():
     ser.write("AT+TEST=RXLRPKT".encode())
-    while not send:
-        if ser.inWaiting():
-            rx_msg = ser.readline().decode()
-            if '+TEST: RX ' in rx_msg:
-                msg_data = rx_msg.split('\"')[-2]
-                print(hex_to_chr(msg_data))
+    while True:
+        while not send:
+            if ser.inWaiting():
+                rx_msg = ser.readline().decode()
+                if '+TEST: RX ' in rx_msg:
+                    msg_data = rx_msg.split('\"')[-2]
+                    print(hex_to_chr(msg_data))
 
 def chr_to_hex(string):
     return codecs.encode(string.encode(),'hex').decode()
