@@ -25,7 +25,7 @@ usr = ""
 def init():
     global usr, ser
     usr = input('Set Username: ')
-    serial_port = input()
+    serial_port = input("Introducellla wea")
     ser = serial.Serial(serial_port, baud_rate)
     initialize_radio()
     print("Radio Initialized")
