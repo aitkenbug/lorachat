@@ -68,5 +68,5 @@ if __name__ == "__main__":
         msg = input("Enter your message!: ")
         msg = f"{usr} --> {msg}"
         send = True
-        send_msg(chr_to_hex(msg.encode()))
+        send_msg(chr_to_hex(msg))
         send = False
