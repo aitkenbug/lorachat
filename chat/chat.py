@@ -45,7 +45,6 @@ def initialize_radio(): #Test PASSED
 def send_msg(message):
     ser.write("AT+TEST=TXLRPKT,\"{}\"\n".format(message).encode())
     time.sleep(0.5)
-    print(ser.readline().decode())
 
 def receive_msg():
     ser.write("AT+TEST=RXLRPKT".encode())
@@ -55,7 +54,7 @@ def receive_msg():
                 rx_msg = ser.readline().decode()
                 if '+TEST: RX ' in rx_msg:
                     msg_data = rx_msg.split('\"')[-2]
-                    print(hex_to_chr(msg_data)+"\n")
+                    print(hex_to_chr(msg_data)+f"\n{usr}")
 
 def chr_to_hex(string):
     return codecs.encode(string.encode(),'hex').decode()
@@ -69,7 +68,7 @@ if __name__ == "__main__":
     init()
     listeting.start()
     while True:
-        msg = input()
+        msg = input(f"{usr}: ")
         msg = f"{usr} --> {msg}"
         send = True
         send_msg(chr_to_hex(msg))
