@@ -61,7 +61,7 @@ def hex_to_chr(string):
 
 listeting = threading.Thread(target=receive_msg, daemon=True)
 
-if __name__ = "__main__":
+if __name__ == "__main__":
     init()
     listeting.start()
     while True:
