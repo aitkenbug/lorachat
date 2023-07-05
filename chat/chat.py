@@ -54,7 +54,7 @@ def receive_msg():
                 rx_msg = ser.readline().decode()
                 if '+TEST: RX ' in rx_msg:
                     msg_data = rx_msg.split('\"')[-2]
-                    print(hex_to_chr(msg_data)+f"\n{usr}")
+                    print(hex_to_chr(msg_data)+f"\n{usr}: ")
 
 def chr_to_hex(string):
     return codecs.encode(string.encode(),'hex').decode()
