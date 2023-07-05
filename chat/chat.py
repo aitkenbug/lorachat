@@ -14,10 +14,12 @@ band_width = 125
 tx_pr = 8
 rx_pr = 8
 power = 22
-
+DELAY = 0.5
 #RF configuration string
 rf_conf_str = "AT+TEST=RFCFG,{},{},{},{},{},{},OFF,OFF,OFF\n".format(freq, mod, band_width, tx_pr, rx_pr, power)
-
+TESTING_MODE = "AT+MODE=TEST\n"
+RECV_MODE = "AT+TEST=RXLRPKT"
+TX_MODE = "AT+TEST=TXLRPKT"
 #Serial Objet
 ser = None  
 send = False
@@ -35,19 +37,16 @@ def init():
     
 
 def initialize_radio(): #Test PASSED
-    ser.write("AT+MODE=TEST\n".encode())
-    time.sleep(0.5)
+    write2ser(TESTING_MODE)
     print(ser.readline().decode())
-    ser.write(rf_conf_str.encode())
-    time.sleep(0.5)
+    write2ser(rf_conf_str)
     print(ser.readline().decode())
 
 def send_msg(message):
-    ser.write("AT+TEST=TXLRPKT,\"{}\"\n".format(message).encode())
-    time.sleep(0.5)
+    write2ser(f"{TX_MODE},\"{message}\"\n")
 
 def receive_msg():
-    ser.write("AT+TEST=RXLRPKT".encode())
+    write2ser(RECV_MODE, delay=0)
     while True:
         while not send:
             if ser.inWaiting():
@@ -62,6 +61,10 @@ def chr_to_hex(string):
 def hex_to_chr(string):
     return codecs.decode(string, 'hex').decode()
 
+def write2ser(mesg2write: str, serial=ser, delay=DELAY):
+    serial.write(mesg2write.encode())
+    time.sleep(delay)
+
 listeting = threading.Thread(target=receive_msg, daemon=True)
 
 if __name__ == "__main__":
@@ -70,8 +73,8 @@ if __name__ == "__main__":
     while True:
         msg = input(f"{usr}: ")
         msg = f"{usr} --> {msg}"
-        send = True
+
+        send = True  #--- this set the send flag to True and ceases to send
         send_msg(chr_to_hex(msg))
-        ser.write("AT+TEST=RXLRPKT".encode())
-        time.sleep(0.5)
-        send = False
+        write2ser(RECV_MODE)
+        send = False #--- ^^ restart listening of data
