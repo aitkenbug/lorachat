@@ -2,6 +2,7 @@ import serial
 import time
 import codecs
 import threading
+from mensajes import Message
 
 
 serial_port = ""
@@ -17,19 +18,24 @@ power = 22
 DELAY = 0.5
 #RF configuration string
 rf_conf_str = "AT+TEST=RFCFG,{},{},{},{},{},{},OFF,OFF,OFF\n".format(freq, mod, band_width, tx_pr, rx_pr, power)
+
 TESTING_MODE = "AT+MODE=TEST\n"
 RECV_MODE = "AT+TEST=RXLRPKT"
 TX_MODE = "AT+TEST=TXLRPKT"
-#Serial Objet
+
+#Serial Object
 ser = None  
 send = False
 usr = ""
+message_buffer = None
+
 def init():
-    global usr, ser
+    global usr, ser, message_buffer
     usr = input('Set Username: ')
     serial_port = input("Choose your Serial Port: ")
     ser = serial.Serial(serial_port, baud_rate)
     initialize_radio()
+    message_buffer = Message(usr)
     print("Radio Initialized")
     print('Your username is: {}'.format(usr))
     print('Begining LoRa Radio Chat ...')
@@ -42,8 +48,8 @@ def initialize_radio(): #Test PASSED
     write2ser(rf_conf_str)
     print(ser.readline().decode())
 
-def send_msg(message):
-    write2ser(f"{TX_MODE},\"{message}\"\n")
+def send_msg(message: Message):
+    write2ser(f"{TX_MODE},\"{chr_to_hex(message.message)}\"\n")
 
 def receive_msg():
     write2ser(RECV_MODE, delay=0)
@@ -61,8 +67,8 @@ def chr_to_hex(string):
 def hex_to_chr(string):
     return codecs.decode(string, 'hex').decode()
 
-def write2ser(mesg2write: str, serial=ser, delay=DELAY):
-    serial.write(mesg2write.encode())
+def write2ser(mesg2write: str, delay=DELAY):
+    ser.write(mesg2write.encode())
     time.sleep(delay)
 
 listeting = threading.Thread(target=receive_msg, daemon=True)
@@ -73,8 +79,8 @@ if __name__ == "__main__":
     while True:
         msg = input(f"{usr}: ")
         msg = f"{usr} --> {msg}"
-
+        message_buffer.set_message(msg)
         send = True  #--- this set the send flag to True and ceases to send
-        send_msg(chr_to_hex(msg))
+        send_msg(message_buffer)
         write2ser(RECV_MODE)
         send = False #--- ^^ restart listening of data
