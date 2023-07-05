@@ -19,10 +19,11 @@ ser = serial.Serial(serial_port, baudrate)
 def main():
     print('Welcome to Echo.py script for lora echo communication...\n\n')
     initialize_radio()
+    time.sleep(0.5)
     listening_ping()
 
 def listening_ping():
-    ser.write("AT+TEST=RXLRPKT".encode())
+    ser.write("AT+TEST=RXLRPKT\n".encode())
     while True:
         if ser.inWaiting():
             rx_msg = ser.readline().decode()
@@ -32,12 +33,14 @@ def listening_ping():
                     print('Ping received\nSending Echo')
                     time.sleep(1)
                     send_msg(chr_to_hex('ping'))
+                    time.sleep(0.5)
                     break
     listening_ping()
 
 def initialize_radio():
     ser.write("AT+MODE=TEST\n".encode())
-    ser.write("AT""AT+TEST=RFCFG,{},{},{},{},{},{},OFF,OFF,OFF\n".format(freq, mod, band_width, tx_pr, rx_pr, power).encode())
+    time.sleep(0.5)
+    ser.write("AT+TEST=RFCFG,{},{},{},{},{},{},OFF,OFF,OFF\n".format(freq, mod, band_width, tx_pr, rx_pr, power).encode())
     print('Radio Initialized ...')
 
 def send_msg(message):
@@ -49,3 +52,4 @@ def chr_to_hex(string):
 def hex_to_chr(string):
     return codecs.decode(string, 'hex').decode()
 
+main()
