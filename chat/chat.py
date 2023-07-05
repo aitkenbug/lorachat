@@ -5,7 +5,7 @@ import threading
 
 
 serial_port = ""
-baud_rate = 9600
+baud_rate = 115200
 
 #Radio set up
 freq = 915
@@ -25,7 +25,7 @@ usr = ""
 def init():
     global usr, ser
     usr = input('Set Username: ')
-    serial_port = input("Introducellla wea")
+    serial_port = input("Choose your Serial Port: ")
     ser = serial.Serial(serial_port, baud_rate)
     initialize_radio()
     print("Radio Initialized")
@@ -49,14 +49,13 @@ def send_msg(message):
 
 def receive_msg():
     ser.write("AT+TEST=RXLRPKT".encode())
-    print("1st listening")
     while True:
         while not send:
             if ser.inWaiting():
                 rx_msg = ser.readline().decode()
                 if '+TEST: RX ' in rx_msg:
                     msg_data = rx_msg.split('\"')[-2]
-                    print(hex_to_chr(msg_data))
+                    print(hex_to_chr(msg_data)+"\n")
 
 def chr_to_hex(string):
     return codecs.encode(string.encode(),'hex').decode()
@@ -70,12 +69,10 @@ if __name__ == "__main__":
     init()
     listeting.start()
     while True:
-        msg = input("Enter your message!: ")
+        msg = input()
         msg = f"{usr} --> {msg}"
         send = True
-        print("no more lisening sending")
         send_msg(chr_to_hex(msg))
-        print("listening again")
         ser.write("AT+TEST=RXLRPKT".encode())
         time.sleep(0.5)
         send = False
