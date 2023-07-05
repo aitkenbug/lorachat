@@ -46,6 +46,7 @@ def send_msg(message):
 
 def receive_msg():
     ser.write("AT+TEST=RXLRPKT".encode())
+    print("1st listening")
     while True:
         while not send:
             if ser.inWaiting():
@@ -69,5 +70,9 @@ if __name__ == "__main__":
         msg = input("Enter your message!: ")
         msg = f"{usr} --> {msg}"
         send = True
+        print("no more lisening sending")
         send_msg(chr_to_hex(msg))
+        print("listening again")
+        ser.write("AT+TEST=RXLRPKT".encode())
+        time.sleep(0.5)
         send = False
