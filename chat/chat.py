@@ -4,7 +4,7 @@ import codecs
 import threading
 
 
-serial_port = "COM24"
+serial_port = ""
 baud_rate = 9600
 
 #Radio set up
@@ -19,13 +19,16 @@ power = 22
 rf_conf_str = "AT+TEST=RFCFG,{},{},{},{},{},{},OFF,OFF,OFF\n".format(freq, mod, band_width, tx_pr, rx_pr, power)
 
 #Serial Objet
-ser = serial.Serial(serial_port,baud_rate)
+ser = None  
 send = False
 usr = ""
 def init():
+    global usr, ser
+    usr = input('Set Username: ')
+    serial_port = input()
+    ser = serial.Serial(serial_port, baud_rate)
     initialize_radio()
     print("Radio Initialized")
-    usr = input('Set Username: ')
     print('Your username is: {}'.format(usr))
     print('Begining LoRa Radio Chat ...')
 
