@@ -15,8 +15,6 @@ tx_pr = 8
 rx_pr = 8
 power = 22
 
-ser = serial.Serial(serial_port, baudrate)
-
 def main():
     print('Welcome to Echo.py script for lora echo communication...\n\n')
     global ser
