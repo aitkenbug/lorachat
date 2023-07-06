@@ -1,31 +1,38 @@
+
+#Code for ping client
+
 import serial 
 import time 
 import codecs
-import colorama
-from colorama import Fore
 
+#Radio setup
 freq = 915
-serial_port = 'COM24'
-baudrate = 9600
+baud_rate = 115200
 mod = "SF9"
 band_width = 125
 tx_pr = 8
 rx_pr = 8
 power = 22
 
-time.monotonic()
 
-ser = serial.Serial(serial_port, baudrate) 
+#ICMP data 
+icmp_id = 0 
 
 def main():
-    print('Welcome to Ping.py script for lora echo communication...\n\n')
+    print('Welcome to Ping.py script for lora echo communication...\n\n') 
+    global ser
+    serial_port = input("Choose your Serial Port: ")
+    ser = serial.Serial(serial_port, baud_rate)
     initialize_radio()
     time.sleep(0.5)
     print('Timeout in 10 seconds')
     send_ping()
 
 def send_ping():
-    send_msg(chr_to_hex('ping'))
+    time_stamp = time.time()
+    message="ping,{},{}".format(icmp_id,time_stamp)
+    send_msg(chr_to_hex(message)
+    icmp_id += 1
     time.sleep(0.5)
     print('Ping Sent')
     t_end = time.time() + 9
@@ -35,8 +42,10 @@ def send_ping():
             rx_msg = ser.readline().decode()
             if '+TEST: RX ' in rx_msg:
                 msg_data = rx_msg.split('\"')[-2]
-                if hex_to_chr(msg_data) == 'ping':
-                    print('Echo received')
+                pind_data = hex_to_chr(msg_data).split(',')
+                if ping_data[0] == 'ping':
+                    time_delta = time.time()-float(ping_data[2])
+                    print('Echo received, icmp_id={}, time={}s'.format(ping_data[1], time_delta))
                     time.sleep(0.5)
                     break
     if time.time()>t_end:

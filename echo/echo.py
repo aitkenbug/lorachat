@@ -1,23 +1,27 @@
+
+#CVode for ping server
+
 import serial 
 import time 
 import codecs
 
-serial_port = '/dev/ttyUSB0'
 
+#Radio setup
 freq = 915
-baudrate = 9600
+baud_rate = 115200
 mod = "SF9"
 band_width = 125
 tx_pr = 8
 rx_pr = 8
 power = 22
 
-time.monotonic()
-
 ser = serial.Serial(serial_port, baudrate)
 
 def main():
     print('Welcome to Echo.py script for lora echo communication...\n\n')
+    global ser
+    serial_port = input("Choose your Serial Port: ")
+    ser = serial.Serial(serial_port, baud_rate)
     initialize_radio()
     time.sleep(0.5)
     listening_ping()
@@ -29,10 +33,11 @@ def listening_ping():
             rx_msg = ser.readline().decode()
             if '+TEST: RX ' in rx_msg:
                 msg_data = rx_msg.split('\"')[-2]
-                if hex_to_chr(msg_data) == 'ping':
+                ping_data = hex_to_chr(msg_data).split(',')
+                if  ping_data[0] == 'ping':
                     print('Ping received\nSending Echo')
                     time.sleep(1)
-                    send_msg(chr_to_hex('ping'))
+                    send_msg(msg_data)
                     time.sleep(0.5)
                     break
     listening_ping()
