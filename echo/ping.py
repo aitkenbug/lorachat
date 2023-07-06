@@ -29,9 +29,10 @@ def main():
     send_ping()
 
 def send_ping():
+    global icmp_id
     time_stamp = time.time()
     message="ping,{},{}".format(icmp_id,time_stamp)
-    send_msg(chr_to_hex(message)
+    send_msg(chr_to_hex(message))
     icmp_id += 1
     time.sleep(0.5)
     print('Ping Sent')
@@ -42,7 +43,7 @@ def send_ping():
             rx_msg = ser.readline().decode()
             if '+TEST: RX ' in rx_msg:
                 msg_data = rx_msg.split('\"')[-2]
-                pind_data = hex_to_chr(msg_data).split(',')
+                ping_data = hex_to_chr(msg_data).split(',')
                 if ping_data[0] == 'ping':
                     time_delta = time.time()-float(ping_data[2])
                     print('Echo received, icmp_id={}, time={}s'.format(ping_data[1], time_delta))

@@ -34,7 +34,7 @@ def listening_ping():
                 ping_data = hex_to_chr(msg_data).split(',')
                 if  ping_data[0] == 'ping':
                     print('Ping received\nSending Echo')
-                    time.sleep(1)
+                    #time.sleep(1)
                     send_msg(msg_data)
                     time.sleep(0.5)
                     break
