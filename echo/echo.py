@@ -13,7 +13,7 @@ mod = "SF9"
 band_width = 125
 tx_pr = 8
 rx_pr = 8
-power = 22
+power = 30
 
 def main():
     print('Welcome to Echo.py script for lora echo communication...\n\n')

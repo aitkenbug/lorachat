@@ -12,7 +12,7 @@ mod = "SF9"
 band_width = 125
 tx_pr = 8
 rx_pr = 8
-power = 22
+power = 30
 
 
 #ICMP data 
@@ -25,7 +25,6 @@ def main():
     ser = serial.Serial(serial_port, baud_rate)
     initialize_radio()
     time.sleep(0.5)
-    print('Timeout in 10 seconds')
     send_ping()
 
 def send_ping():
@@ -35,8 +34,7 @@ def send_ping():
     send_msg(chr_to_hex(message))
     icmp_id += 1
     time.sleep(0.5)
-    print('Ping Sent')
-    t_end = time.time() + 9
+    t_end = time.time() + 4
     ser.write("AT+TEST=RXLRPKT\n".encode())
     while time.time() < t_end:
         if ser.inWaiting():
@@ -50,7 +48,7 @@ def send_ping():
                     time.sleep(0.5)
                     break
     if time.time()>t_end:
-        print('timeout, echo not received\nSending ping again...')
+        print('No echo received')
     send_ping()
 
 def initialize_radio():
