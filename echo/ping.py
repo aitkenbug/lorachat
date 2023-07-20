@@ -27,7 +27,7 @@ def main():
     global ser, test_id
     serial_port = input("Choose your Serial Port: ")
     ser = serial.Serial(serial_port, baud_rate)
-    test_id = input("Insert your test ID: ")
+    #test_id = input("Insert your test ID: ")
     initialize_radio()
     time.sleep(0.5)
     send_ping()
@@ -53,13 +53,15 @@ def send_ping():
                         if ping_data[0] == 'ping':
                             time_delta = time.time()-float(ping_data[2])
                             print('Echo received, icmp_id={}, time={}s'.format(ping_data[1], time_delta))
-                            csv_data = np.append(csv_data, np.array([[test_id, ping_data[1], str(time_delta)]]),axis=0)
+                            #csv_data = np.append(csv_data, np.array([[test_id, ping_data[1], str(time_delta)]]),axis=0)
                             time.sleep(0.5)
                             break
             if time.time()>t_end:
                 print('No echo received')
     except KeyboardInterrupt: #ctrl + c
-        save_data(csv_data)
+        print("Terminando la transmision")
+        exit(0)
+        #save_data(csv_data)
 
 def initialize_radio():
     ser.write("AT+MODE=TEST\n".encode())
@@ -76,10 +78,10 @@ def chr_to_hex(string):
 def hex_to_chr(string):
     return codecs.decode(string, 'hex').decode()
 
-def save_data(d):
-    f = open(test_id+'.csv', 'w')
-    writer = csv.writer(f)
-    writer.writerows(d)
-    f.close()
+#def save_data(d):
+#    f = open(test_id+'.csv', 'w')
+#    writer = csv.writer(f)
+#    writer.writerows(d)
+#    f.close()
 
 main()
